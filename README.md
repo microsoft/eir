@@ -5,7 +5,7 @@ You can use this project as a starting point for your own APIs.
 
 The repository is designed for use with [Docker containers](https://www.docker.com/), both for local development and deployment, and includes infrastructure files for deployment to [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/overview). 🐳
 
-The code istested with [pytest](https://docs.pytest.org/en/7.2.x/),
+The code is tested with [pytest](https://docs.pytest.org/en/7.2.x/),
 linted with [ruff](https://github.com/charliermarsh/ruff), and formatted with [black](https://black.readthedocs.io/en/stable/).
 Code quality issues are all checked with both [pre-commit](https://pre-commit.com/) and Github actions.
 
