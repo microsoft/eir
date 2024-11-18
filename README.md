@@ -65,7 +65,7 @@ This repo is set up for deployment on Azure Container Apps using the configurati
 
 This diagram shows the architecture of the deployment:
 
-![Diagram of app architecture: Azure Container Apps environment, Azure Container App, Azure Container Registry, Container, and Key Vault](readme_diagram.png)
+![Diagram of app architecture: Azure Container Apps environment, Azure Container App, Azure Container Registry, Container, and Key Vault](docs/readme_diagram.png)
 
 Steps for deployment:
 
