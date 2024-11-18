@@ -1,0 +1,4 @@
+GET http://localhost:8000/generate_name
+
+###
+GET http://localhost:8000/generate_name?starts_with=p
