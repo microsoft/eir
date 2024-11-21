@@ -2,3 +2,24 @@ GET http://localhost:8000/generate_name
 
 ###
 GET http://localhost:8000/generate_name?starts_with=p
+
+###
+POST http://localhost:8000/generate_plan
+Content-Type: application/json
+
+{
+    "drug": "ozempic",
+    "rules": [
+        {
+            "name": "1.1",
+            "value": "For patients requiring ongoing drug treatment for type 2 diabetes mellitus, submission of medical records (e.g., chart notes) confirming diagnosis of type 2 diabetes mellitus"
+        },
+        {
+            "name": "1.2",
+            "value": "A1C greater than or equal to 6.5% OR Fasting plasma glucose (FPG) greater than or equal to 126 mg/dL"
+        }
+    ]
+}
+
+###
+GET http://localhost:8000/get_plan?drug=ozempic
