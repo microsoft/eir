@@ -1,17 +1,10 @@
-from dotenv import load_dotenv
 
 from pydantic import BaseModel
-from langchain_core.tools import tool
-from langgraph.checkpoint.memory import MemorySaver
-from langgraph.graph import END, START, StateGraph, MessagesState
-from langgraph.prebuilt import ToolNode
 
 #from .tools.patient_data import get_patient_data, get_patient_notes
 from .agents.planner import get_validation_plan
 
 import fastapi
-
-load_dotenv()
 
 app = fastapi.FastAPI()
 
