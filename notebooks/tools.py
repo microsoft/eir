@@ -14,5 +14,5 @@ def get_patient_data(patient_id: str):
     return {
         "id": patient_id,
         "name": "John Doe",
-        "birthdate": "2010-01-05"
+        "birthdate": "2001-01-05"
     }

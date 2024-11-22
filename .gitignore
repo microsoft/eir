@@ -4,4 +4,4 @@
 .azure
 __pycache__/
 .coverage
-sample_data/
+#sample_data/ ## MUST BE ENABLED FOR GH

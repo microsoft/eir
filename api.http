@@ -8,17 +8,8 @@ POST http://localhost:8000/generate_plan
 Content-Type: application/json
 
 {
-    "drug": "ozempic",
-    "rules": [
-        {
-            "name": "1.1",
-            "value": "For patients requiring ongoing drug treatment for type 2 diabetes mellitus, submission of medical records (e.g., chart notes) confirming diagnosis of type 2 diabetes mellitus"
-        },
-        {
-            "name": "1.2",
-            "value": "A1C greater than or equal to 6.5% OR Fasting plasma glucose (FPG) greater than or equal to 126 mg/dL"
-        }
-    ]
+    "drug": "Ozempic",
+    "rules": "Patient must have a confirmed diagnosis of type 2 diabetes mellitus with an A1C above 6.5% and be 18 years of age or older."
 }
 
 ###
