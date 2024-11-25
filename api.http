@@ -6,7 +6,7 @@ Content-Type: application/json
 
 {
     "drug": "Ozempic",
-    "rules": "Patient must have a confirmed diagnosis of type 2 diabetes mellitus with an A1C above 6.5% and be 18 years of age or older."
+    "rules": "Patient must be 18 years or older AND Patient must have a confirmed diagnosis of Type 2 diabetes AND Patient must have an A1C level of 7.0% or higher AND Patient must have a fasting plasma glucose (FPG) greater than or equal to 126 mg/dL OR Patient must have a 2-hour plasma glucose (PG) greater than or equal to 200 mg/dL during OGTT (oral glucose tolerance test) OR Patient must have a random plasma glucose greater than or equal to 200 mg/dL in patient with classic symptoms of hyperglycemia or hyperglycemic crisis."
 }
 
 ###
@@ -16,4 +16,3 @@ Content-Type: application/json
 {
     "plan": "Plan: Verify the patient's diagnosis of type 2 diabetes mellitus.\n#E1 = ChartNotes[search for a confirmed diagnosis of type 2 diabetes mellitus in patient visit notes]\n\nPlan: Check the patient's A1C levels to ensure they are above 6.5%.\n#E2 = PatientData[retrieve the latest A1C levels for the patient]\n\nPlan: Confirm the patient is 18 years of age or older.\n#E3 = PatientData[retrieve the patient's date of birth]\n\nCombining these steps, we will have the evidence for the rule:\n\n1. Confirmed diagnosis of type 2 diabetes mellitus (#E1).\n2. A1C levels above 6.5% (#E2).\n3. Patient is 18 years of age or older (#E3)."
 }
-##

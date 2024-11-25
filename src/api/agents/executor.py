@@ -12,6 +12,8 @@ model = AzureChatOpenAI(model=os.environ["OPENAI_MODEL_NAME"],
                         base_url=os.environ["OPENAI_API_BASE_URL"])
 
 
+plan_string=""
+
 def _get_current_task(state: ReWOO):
     if "results" not in state or state["results"] is None:
         return 1
@@ -22,15 +24,15 @@ def _get_current_task(state: ReWOO):
 
 
 
-def get_plan(state: ReWOO):
+def get_plan(state: ReWOO, config):
     # Regex to match expressions of the form E#... = ...[...]
     regex_pattern = r"Plan:\s*(.+)\s*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
-    # task = state["task"]    
-    # result = planner.invoke({"rule": task})
+
+    result = config["metadata"]["plan"]
     
     # Find all matches in the sample text
-    matches = re.findall(regex_pattern, state["plan_string"])
-    return {"steps": matches, "plan_string": state["plan_string"]}
+    matches = re.findall(regex_pattern, result)
+    return {"steps": matches, "plan_string": result}
 
 
 
@@ -90,22 +92,21 @@ def solve(state: ReWOO):
     return {"result": result.content}
 
 
-def run_plan(plan: str):
-    
-    state = ReWOO(plan_string=plan)
+def run_plan(plan_string: str):
+    config = {"plan": plan_string}
+
     graph = StateGraph(ReWOO)
    
-    graph.add_node("plan", get_plan)    
+    graph.add_node("plan", get_plan, metadata=config)    
     graph.add_node("tool", tool_execution)
     graph.add_node("solve", solve)
     graph.add_edge("plan", "tool")
     graph.add_edge("solve", END)
     graph.add_conditional_edges("tool", _route)
     graph.add_edge(START, "plan")
-
-    app = graph.compile()
     
+    app = graph.compile()
+    result = app.invoke({"task": task})
 
-    for s in app.stream({"task": rule}):
-        return app(s["solve"]["result"])
+    return result
 
