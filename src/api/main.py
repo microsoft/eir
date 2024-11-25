@@ -1,7 +1,6 @@
 
 from pydantic import BaseModel
 
-#from .tools.patient_data import get_patient_data, get_patient_notes
 from .agents.planner import get_validation_plan
 from .agents.executor import run_plan
 from .tools.drug_rules import fetch_drug_rules
