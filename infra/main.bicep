@@ -11,6 +11,7 @@ param location string
 
 param apiAppExists bool = false
 
+var keyVaultName = '${prefix}-kv'
 var resourceToken = toLower(uniqueString(subscription().id, name, location))
 var tags = { 'azd-env-name': name }
 
@@ -22,6 +23,15 @@ resource resourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 
 var prefix = '${name}-${resourceToken}'
 
+module keyVault 'core/security/keyvault.bicep' = {
+  name: 'keyvault'
+  scope: resourceGroup
+  params: {
+    name: keyVaultName
+    location: location
+    tags: tags
+  }
+}
 
 // Container apps host (including container registry)
 module containerApps 'core/host/container-apps.bicep' = {
@@ -60,7 +70,7 @@ module cosmosDb 'core/database/cosmos/sql/cosmos-sql-db.bicep' = {
     location: location
     tags: tags
     databaseName: 'mydatabase'
-    keyVaultName: '${prefix}-keyvault'
+    keyVaultName: keyVaultName
     containers: [
       {
         name: 'mycontainer'
