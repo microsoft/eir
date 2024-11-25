@@ -1,4 +1,10 @@
-GET http://localhost:8000/generate_name
+POST http://localhost:8000/generate_plan
+Content-Type: application/json
+
+{
+    "drug": "Ozempic",
+    "rules": "Patient must have a confirmed diagnosis of type 2 diabetes mellitus with an A1C above 6.5% and be 18 years of age or older."
+}
 
 ###
-GET http://localhost:8000/generate_name?starts_with=p
+GET http://localhost:8000/get_plan?drug=ozempic

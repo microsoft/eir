@@ -1,5 +1,7 @@
 **/*.pyc
 .venv/
+.env
 .azure
 __pycache__/
 .coverage
+#sample_data/ ## MUST BE ENABLED FOR GH

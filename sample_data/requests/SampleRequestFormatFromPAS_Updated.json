@@ -1,0 +1,230 @@
+{
+    "AdditionalDrugInfo": {
+        "DaysSupply": "1",
+        "PAStartDate": "11/18/2024",
+        "Quantity": "1"
+    },
+    "CaseId": "PA-A12345678",
+    "ChartNotes": {
+        "AttachmentKey": "/ZYX9VW8U/a1bcd234e567fg8hi9f6dc260ff51a3b2/ePA: PA-A1234567_ZYX9VW8U.pdf",
+        "Category": "ePA",
+        "MessageID": "a1bcd234e567fg8hi9f6dc260ff51a3b2"
+    },
+    "ClinicalGuidelines": [
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "I acknowledge"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "I do not acknowledge"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "I acknowledge",
+            "QuestionDescription": "I certify that requests for tiering exceptions or cost reduction within the current plan year and pre-benefit requests in advance of the next plan year will not be considered using this method of submission. While OptumRx Prior Authorization department strives to review and respond to your request in a timely manner, any indication, expressed or implied, for tiering exception or cost reduction within the current plan year and pre-benefit requests in advance of the next plan year supplied through this submission method shall not be considered as valid. If you have a request for tiering exception or cost reduction within the current plan year or a pre-benefit request in advance of the next plan year and feel the member's life or health or ability to regain maximum function is in serious jeopardy, contact us at 1-800-711-4555 instead of using this method of submission.",
+            "QuestionSequence": "1"
+        },
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "Standard timeframe is appropriate"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "Expedited timeframe is needed"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "Expedited timeframe is needed",
+            "QuestionDescription": "Does the prescriber attest that applying the standard timeframe for review of this coverage determination will not seriously jeopardize the enrollee's life, health, or ability to regain maximum function?",
+            "QuestionSequence": "2"
+        },
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "Yes"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "No"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "No",
+            "QuestionDescription": "Is this medication being prescribed as continuation of therapy?",
+            "QuestionSequence": "3"
+        },
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "Moderately to severely active rheumatoid arthritis (RA)"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "Moderate to severely active polyarticular juvenile idiopathic arthritis (PJIA)"
+                },
+                {
+                    "ChoiceId": "3",
+                    "ChoiceValue": "Active psoriatic arthritis (PsA)"
+                },
+                {
+                    "ChoiceId": "4",
+                    "ChoiceValue": "Moderate to severe chronic plaque psoriasis (PsO)"
+                },
+                {
+                    "ChoiceId": "5",
+                    "ChoiceValue": "Active ankylosing spondylitis (AS)"
+                },
+                {
+                    "ChoiceId": "6",
+                    "ChoiceValue": "Other"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "Moderately to severely active rheumatoid arthritis (RA)",
+            "QuestionDescription": "What is the diagnosis for the medication being requested?",
+            "QuestionSequence": "4"
+        },
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "Medical records have been attached"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "Provider does not have medical records"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "Medical records have been attached",
+            "QuestionDescription": "Has the provider submitted medical records (for example, chart notes) confirming a diagnosis of moderately to severely active rheumatoid arthritis? Failure to submit medical records may lead to an adverse determination.",
+            "QuestionSequence": "5"
+        },
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "Medical records have been attached"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "Provider does not have medical records"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "Provider does not have medical records",
+            "QuestionDescription": "Has the provider submitted medical records (for example, chart notes) confirming a minimum duration of a 3-month trial and failure, contraindication, or intolerance to ONE of the following conventional therapies at maximally tolerated doses: (1) methotrexate, (2) leflunomide, (3) sulfasalazine? Failure to submit medical records may lead to an adverse determination.",
+            "QuestionSequence": "6"
+        },
+        {
+            "AnswerChoices": [
+                {
+                    "ChoiceId": "1",
+                    "ChoiceValue": "Yes"
+                },
+                {
+                    "ChoiceId": "2",
+                    "ChoiceValue": "No"
+                }
+            ],
+            "AnswerType": "DropDown",
+            "ProviderAnswer": "Yes",
+            "QuestionDescription": "Is the requested medication prescribed by or in consultation with a rheumatologist?",
+            "QuestionSequence": "7"
+        }
+    ],
+    "DrugDetails": {
+        "DrugBrandName": "HUMIRA",
+        "DrugLabelName": "HUMIRA KIT 40MG/0.8",
+        "GPI": "6627001500F820",
+        "NDC": "00074379902"
+    },
+    "ECDHDetails": {
+        "AllergyIntolerance": [
+            {
+                "Code": "716186003",
+                "Name": "Nsaids (Non-Steroidal Anti-Inflammatory Drug)"
+            },
+            {
+                "Code": "70618",
+                "Name": "Penicillin"
+            }
+        ],
+        "Condition": [
+            {
+                "Name": "Other long term (current) drug therapy"
+            },
+            {
+                "Name": "Bariatric surgery status"
+            },
+            {
+                "Name": "Gastro-esophageal reflux disease without esophagitis"
+            }
+        ],
+        "MedicationStatement": [
+            {
+                "Directions": "amLODIPine Besylate 5 MG",
+                "Name": "amlodipine besylate 5 mg oral tablet"
+            },
+            {
+                "Directions": "Medrol 4 MG",
+                "Name": "medrol 4 mg oral tablet therapy pack"
+            },
+            {
+                "Directions": "Atorvastatin Calcium 20 MG",
+                "Name": "atorvastatin calcium 20 mg oral tablet"
+            }
+        ],
+        "Observation": [
+            {
+                "Name": "BILIRUBIN, TOTAL",
+                "Result": "0.4"
+            },
+            {
+                "Name": "HEMOGLOBIN A1c",
+                "Result": "7.8"
+            },
+            {
+                "Name": "GLUCOSE",
+                "Result": "209"
+            },
+            {
+                "Name": "ALKALINE PHOSPHATASE",
+                "Result": "86"
+            },
+            {
+                "Name": "blood pressure systolic",
+                "Result": "147"
+            },
+            {
+                "Name": "ALBUMIN, URINE, RANDOM",
+                "Result": "5.9"
+            }
+        ],
+        "Procedure": [
+            {
+                "Code": "96372",
+                "Name": "THER/PROPH/DIAG INJ, SC/IM"
+            },
+            {
+                "Code": "J1100",
+                "Name": "DEXAMETHASONE"
+            }
+        ]
+    },
+    "MemberDOB": "12/28/1960",
+    "MemberID": "2012231000",
+    "ProviderSpecialtyCode": "DDS",
+    "ProviderSpecialtyDesc": "Endodontics",
+    "RequestHeader": {
+        "Application": "PAS",
+        "RequestId": "12345678"
+    }
+}

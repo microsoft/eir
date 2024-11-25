@@ -1,16 +1,22 @@
-import random
+
+from pydantic import BaseModel
+
+#from .tools.patient_data import get_patient_data, get_patient_notes
+from .agents.planner import get_validation_plan
 
 import fastapi
 
-from .data import names
-
 app = fastapi.FastAPI()
 
+class plan_request(BaseModel):
+    drug: str
+    rules: str
 
-@app.get("/generate_name")
-async def generate_name(starts_with: str = None):
-    name_choices = names
-    if starts_with:
-        name_choices = [name for name in name_choices if name.lower().startswith(starts_with.lower())]
-    random_name = random.choice(name_choices)
-    return {"name": random_name}
+@app.post("/generate_plan")
+async def generate_plan(request: plan_request):
+    result = get_validation_plan(request.rules)
+    return result
+
+# @app.get("/get_plan")
+# async def get_plan(drug: str):
+#     return {"plan": f"Take 1 pill of {drug} every 4 hours"}
