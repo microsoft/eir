@@ -30,4 +30,4 @@ def get_validation_plan(rule: str) -> str:
     
     result = model.invoke(prompt.format(rule=rule))
     
-    return result
+    return result.content
