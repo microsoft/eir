@@ -62,26 +62,13 @@ module api 'api.bicep' = {
   }
 }
 // Cosmos DB
-module cosmosDb 'core/database/cosmos/sql/cosmos-sql-db.bicep' = {
+module cosmosdb 'db.bicep' = {
   name: 'cosmosdb'
   scope: resourceGroup
   params: {
     accountName: '${prefix}-cosmosdb'
     location: location
     tags: tags
-    databaseName: 'mydatabase'
-    keyVaultName: keyVaultName
-    containers: [
-      {
-        name: 'mycontainer'
-        properties: {
-          partitionKey: {
-            paths: ['/myPartitionKey']
-            kind: 'Hash'
-          }
-        }
-      }
-    ]
   }
 }
 
@@ -150,6 +137,6 @@ output SERVICE_API_NAME string = api.outputs.SERVICE_API_NAME
 output SERVICE_API_URI string = api.outputs.SERVICE_API_URI
 output SERVICE_API_IMAGE_NAME string = api.outputs.SERVICE_API_IMAGE_NAME
 output SERVICE_API_ENDPOINTS array = ['${api.outputs.SERVICE_API_URI}/generate_name']
-output COSMOS_DB_ACCOUNT_NAME string = cosmosDb.outputs.accountName
+output COSMOS_DB_ACCOUNT_NAME string = cosmosdb.outputs.accountName
 output APP_INSIGHTS_NAME string = appInsights.outputs.name
 
