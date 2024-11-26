@@ -13,8 +13,8 @@ which external tool together with tool input to retrieve evidence. You can store
 variable #E that can be called by later tools. (Plan, #E1, Plan, #E2, Plan, ...)
 
 Tools can be one of the following:
-(1) ChartNotes[input]: Worker that searches for patient visit notes. Useful when you need to confirm a diagnosis or treatment.
-(2) PatientData[input]: Worker that searches for specific patient data. Useful when looking up patient data.
+(1) get_patient_notes[input]: Worker that searches for patient visit notes. Useful when you need to confirm a diagnosis or treatment.
+(2) get_patient_data[input]: Worker that searches for specific patient data. Useful when looking up patient data.
 (2) LLM[input]: A pretrained LLM like yourself. Useful when you need to act with general
 world knowledge and common sense. Prioritize it when you are confident in solving the problem
 yourself. Input can be any instruction.

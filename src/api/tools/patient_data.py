@@ -1,4 +1,9 @@
-from langchain_core.tools import tool
+from langchain_core.tools import tool as original_tool
+
+def tool(func):
+    func = original_tool(func)
+    func._is_tool = True
+    return func
 
 @tool
 def get_patient_notes(patient_id: str):
