@@ -14,6 +14,7 @@ class plan_request(BaseModel):
     rules: str
 
 class ExecutePlanRequest(BaseModel):
+    task: str
     plan: str
 
 @app.post("/generate_plan")
@@ -33,5 +34,5 @@ async def get_rules(drug:str):
 @app.post("/execute_plan")
 async def execute_plan(request: ExecutePlanRequest):
     # Get the plan from the body (JSON) in the POST request and execute it
-    result = run_plan(request.plan)
+    result = run_plan(request.task, request.plan)
     return result

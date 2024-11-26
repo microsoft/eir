@@ -6,13 +6,14 @@ from langchain_openai import AzureChatOpenAI
 
 from ..tools import patient_data
 from ..models.state import ReWOO
+import importlib
+import inspect
+from ..tools import *
 
 model = AzureChatOpenAI(model=os.environ["OPENAI_MODEL_NAME"], 
                         api_version=os.environ["OPENAI_API_VERSION"], 
                         base_url=os.environ["OPENAI_API_BASE_URL"])
 
-
-plan_string=""
 
 def _get_current_task(state: ReWOO):
     if "results" not in state or state["results"] is None:
@@ -35,23 +36,29 @@ def get_plan(state: ReWOO, config):
     return {"steps": matches, "plan_string": result}
 
 
+def get_tool_functions():
+    tool_functions = {}
+    # tools_module = importlib.import_module(".api.tools", package=__name__)
+    tools_module = importlib.import_module("src.api.tools.patient_data")
+    for name, obj in inspect.getmembers(tools_module):
+        if callable(obj) and hasattr(obj, "_is_tool"):
+            tool_functions[name] = obj
+    return tool_functions
 
+tool_functions = get_tool_functions()
 
 def tool_execution(state: ReWOO):
     """Worker node that executes the tools of a given plan."""
+    # tool_functions = get_tool_functions()
     _step = _get_current_task(state)
     _, step_name, tool, tool_input = state["steps"][_step - 1]
     _results = (state["results"] or {}) if "results" in state else {}
     for k, v in _results.items():
         tool_input = tool_input.replace(k, v)
-    if tool == "ChartNotes":
-        result = patient_data.get_patient_notes(tool_input)
-    elif tool == "PatientData":
-        result = patient_data.get_patient_data(tool_input)
-    elif tool == "LLM":
-        result = model.invoke(tool_input)
+    if tool in tool_functions:
+        result = tool_functions[tool](tool_input)
     else:
-        raise ValueError
+        raise ValueError(f"Tool {tool} not found")
     _results[step_name] = str(result)
     return {"results": _results}
 
@@ -65,7 +72,7 @@ def _route(state):
         return "tool"
     
 
-task = "Is the patient with id 1234 eligible for the Ozempic drug?"
+# task = "Is the patient with id 1234 eligible for the Ozempic drug?"
 solve_prompt = """Solve the following task or problem. To solve the problem, we have made step-by-step Plan and \
 retrieved corresponding Evidence to each Plan. Use them with caution since long evidence might \
 contain irrelevant information.
@@ -92,8 +99,11 @@ def solve(state: ReWOO):
     return {"result": result.content}
 
 
-def run_plan(plan_string: str):
-    config = {"plan": plan_string}
+def run_plan(task: str, plan_string: str):
+    config = {
+        "plan": plan_string,
+        "task": task
+        }
 
     graph = StateGraph(ReWOO)
    
@@ -109,4 +119,3 @@ def run_plan(plan_string: str):
     result = app.invoke({"task": task})
 
     return result
-
