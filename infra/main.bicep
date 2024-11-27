@@ -136,7 +136,7 @@ output SERVICE_API_IDENTITY_PRINCIPAL_ID string = api.outputs.SERVICE_API_IDENTI
 output SERVICE_API_NAME string = api.outputs.SERVICE_API_NAME
 output SERVICE_API_URI string = api.outputs.SERVICE_API_URI
 output SERVICE_API_IMAGE_NAME string = api.outputs.SERVICE_API_IMAGE_NAME
-output SERVICE_API_ENDPOINTS array = ['${api.outputs.SERVICE_API_URI}/generate_name']
+output SERVICE_API_ENDPOINTS array = ['${api.outputs.SERVICE_API_URI}/generate_plan', '${api.outputs.SERVICE_API_URI}/execute_plan', '${api.outputs.SERVICE_API_URI}/get_rules']
 output COSMOS_DB_ACCOUNT_NAME string = cosmosdb.outputs.accountName
 output APP_INSIGHTS_NAME string = appInsights.outputs.name
 
