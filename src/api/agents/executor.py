@@ -26,9 +26,10 @@ def _get_current_task(state: ReWOO):
 
 
 
-def get_plan(state: ReWOO, config):
+def get_plan(state:ReWOO, config):
     # Regex to match expressions of the form E#... = ...[...]
-    regex_pattern = r"Plan:\s*(.+)\s*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
+    # regex_pattern = r"Plan:\s*(.+)\s*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
+    regex_pattern = r"Plan:\s*(.+)\s*(?:\n\s*)*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
 
     result = config["metadata"]["plan"]
     
@@ -73,7 +74,7 @@ def _route(state):
         return "tool"
     
 
-# task = "Is the patient with id 1234 eligible for the Ozempic drug?"
+task = "Is the patient with id 1234 eligible for the Ozempic drug?"
 solve_prompt = """Solve the following task or problem. To solve the problem, we have made step-by-step Plan and \
 retrieved corresponding Evidence to each Plan. Use them with caution since long evidence might \
 contain irrelevant information.
