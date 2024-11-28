@@ -6,19 +6,27 @@ import json
 import requests
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
-from auth import get_access_token
+# from auth import get_access_token
 from langchain.agents import tool
+
+from langchain_core.tools import tool as original_tool
 
 load_dotenv()
 
 chartnotes_api_url = os.getenv("CHARTNOTES_API_URL")
- 
+
+
+def tool(func):
+    func = original_tool(func)
+    func._is_tool = True
+    return func
 
 def get_chartnotes(fileName: str, caseId: str) -> str:
  
     """Calls chartnotes API to fetch diagnosis data for the patient."""
    
-    token = get_access_token()
+    # token = get_access_token()
+    token = "123"
    
     payload={}
    
@@ -42,7 +50,7 @@ def get_chartnotes(fileName: str, caseId: str) -> str:
  
 @tool
 def get_observation_data(case_data):
-   
+    """Extracts the lab observation data from the case data."""
     ECDH_data= case_data['ECDHDetails']['Observation']
 
     if ECDH_data:

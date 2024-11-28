@@ -7,7 +7,7 @@ def tool(func):
 
 @tool
 def get_patient_notes(patient_id: str):
-    """Get patient notes by patient ID."""
+    """Get patient chart notes by patient ID."""
     return {
         "id": patient_id,
         "notes": "Patient was diagnosed with Type 2 diabetes on 2023-01-09. Patient has an A1C level of 9.5%."
@@ -15,7 +15,7 @@ def get_patient_notes(patient_id: str):
     
 @tool
 def get_patient_data(patient_id: str):
-    """Get patient data by patient ID."""
+    """Get demographic patient data by patient ID."""
     return {
         "id": patient_id,
         "name": "John Doe",
