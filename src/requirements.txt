@@ -3,3 +3,5 @@ uvicorn[standard]==0.29.0
 gunicorn==22.0.0
 langgraph
 python-dotenv
+oauthlib
+requests-oauthlib

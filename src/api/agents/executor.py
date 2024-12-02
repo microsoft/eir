@@ -4,10 +4,11 @@ import re
 from langgraph.graph import END, StateGraph, START
 from langchain_openai import AzureChatOpenAI
 
-from ..tools import patient_data
+# from ..tools import patient_data
 from ..models.state import ReWOO
 import importlib
 import inspect
+import pkgutil
 from ..tools import *
 
 model = AzureChatOpenAI(model=os.environ["OPENAI_MODEL_NAME"], 
@@ -25,9 +26,10 @@ def _get_current_task(state: ReWOO):
 
 
 
-def get_plan(state: ReWOO, config):
+def get_plan(state:ReWOO, config):
     # Regex to match expressions of the form E#... = ...[...]
-    regex_pattern = r"Plan:\s*(.+)\s*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
+    # regex_pattern = r"Plan:\s*(.+)\s*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
+    regex_pattern = r"Plan:\s*(.+)\s*(?:\n\s*)*(#E\d+)\s*=\s*(\w+)\s*\[([^\]]+)\]"
 
     result = config["metadata"]["plan"]
     
@@ -37,19 +39,19 @@ def get_plan(state: ReWOO, config):
 
 
 def get_tool_functions():
-    tool_functions = {}
-    # tools_module = importlib.import_module(".api.tools", package=__name__)
-    tools_module = importlib.import_module("src.api.tools.patient_data")
-    for name, obj in inspect.getmembers(tools_module):
-        if callable(obj) and hasattr(obj, "_is_tool"):
-            tool_functions[name] = obj
+    tool_functions = {}    
+    tools_module = importlib.import_module("src.api.tools")
+    for _, module_name, _ in pkgutil.iter_modules(tools_module.__path__):
+        module = importlib.import_module(f"src.api.tools.{module_name}")        
+        for name, obj in inspect.getmembers(module):
+            if callable(obj) and hasattr(obj, "_is_tool"):
+                tool_functions[name] = obj
     return tool_functions
 
 tool_functions = get_tool_functions()
 
 def tool_execution(state: ReWOO):
-    """Worker node that executes the tools of a given plan."""
-    # tool_functions = get_tool_functions()
+    """Worker node that executes the tools of a given plan."""    
     _step = _get_current_task(state)
     _, step_name, tool, tool_input = state["steps"][_step - 1]
     _results = (state["results"] or {}) if "results" in state else {}
@@ -72,7 +74,7 @@ def _route(state):
         return "tool"
     
 
-# task = "Is the patient with id 1234 eligible for the Ozempic drug?"
+task = "Is the patient with id 1234 eligible for the Ozempic drug?"
 solve_prompt = """Solve the following task or problem. To solve the problem, we have made step-by-step Plan and \
 retrieved corresponding Evidence to each Plan. Use them with caution since long evidence might \
 contain irrelevant information.
