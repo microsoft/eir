@@ -1,0 +1,17 @@
+URL: https://gateway.optum.com/api/ben/pas/case-attachment-documents/v1
+ 
+Sample Request: 
+
+{
+"PACaseID":"PA-20274324",
+"Category":"ePA",
+"MessageID":"4d4afcc26bbc4a138bf297692f0cc6d5",
+"AttachmentKey":"/1115T092357277/4d4afcc26bbc4a138bf297692f0cc6d5/ePA: PA-20274324_BCPM2P4A_No_PHI_Ozempic_WeightLoss.pdf",
+"RequestHeader": {
+"Application": "nextpa",
+"RequestId":"12345678"
+}
+}
+
+Response type: multipart/form-data
+

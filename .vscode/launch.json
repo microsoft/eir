@@ -9,7 +9,7 @@
             "type": "debugpy",
             "request": "launch",
             "module": "uvicorn",
-            "args": ["src.api.main:app", "--reload"],
+            "args": ["src.api.main:app", "--reload", "--env-file", "./src/.env"],
             "justMyCode": true
         },
         {
