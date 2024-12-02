@@ -1,11 +1,42 @@
-
 from pydantic import BaseModel
+
+# OpenTelemetry Integration
+### 
+import os
+from opentelemetry import trace
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+# from dotenv import load_dotenv
+# load_dotenv('azure.env')
+from azure.monitor.opentelemetry.exporter import AzureMonitorTraceExporter
+
+exporter = AzureMonitorTraceExporter.from_connection_string(
+    os.environ["APPLICATIONINSIGHTS_CONNECTION_STRING"]
+)
+
+
+tracer_provider = TracerProvider()
+from openinference.instrumentation.langchain import LangChainInstrumentor
+from opentelemetry import trace as trace_api
+from opentelemetry.exporter.otlp.proto.http.trace_exporter import OTLPSpanExporter
+from opentelemetry.sdk import trace as trace_sdk
+from opentelemetry.sdk.trace.export import ConsoleSpanExporter, SimpleSpanProcessor
+trace_api.set_tracer_provider(tracer_provider)
+trace.set_tracer_provider(tracer_provider)
+tracer = trace.get_tracer(__name__)
+span_processor = BatchSpanProcessor(exporter, schedule_delay_millis=60000)
+trace.get_tracer_provider().add_span_processor(span_processor)
+LangChainInstrumentor().instrument()
+
+###
+
 
 from .agents.planner import get_validation_plan
 from .agents.executor import run_plan
 from .tools.drug_rules import fetch_drug_rules
 
 import fastapi
+
 
 app = fastapi.FastAPI()
 

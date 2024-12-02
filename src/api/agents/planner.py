@@ -20,7 +20,7 @@ Tools can be one of the following:
 
 For example, 
 Rule: The outside air temperature must be below 32 degrees Fahrenheit in order for it to be snowing. 
-Plan: Look up the outside air temperature. #E1 = WeatherData[lookup outside air temperature] 
+Plan: Look up the outside air temperature.#E1=WeatherData[lookup outside air temperature] 
 
 Begin! 
 Describe your plans with rich details. Each Plan should be followed by only one #E.
