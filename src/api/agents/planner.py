@@ -13,17 +13,18 @@ which external tool together with tool input to retrieve evidence. You can store
 variable #E that can be called by later tools. (Plan, #E1, Plan, #E2, Plan, ...) 
 
 Tools can be one of the following: 
-(1) get_patient_notes[patientId]: Worker that searches for patient visit notes. Useful when you need to confirm a diagnosis or treatment. 
-(2) get_patient_data[patientId]: Worker that searches for demographic patient data. Useful when looking up things like date of birth. 
-(3) get_observation_data[caseData]: Worker that searches for lab patient data. Useful when looking up lab results for a patient. 
-(4) LLM[input]: A pretrained LLM like yourself. Useful when you need to act with general world knowledge and common sense. Prioritize it when you are confident in solving the problem yourself. Input can be any instruction. 
+(1) get_patient_notes[input]: Worker that searches for patient visit notes. Useful when you need to confirm a diagnosis or treatment. 
+(2) get_patient_data[input]: Worker that searches for demographic patient data. Useful when looking up things like date of birth. 
+(3) LLM[input]: A pretrained LLM like yourself. Useful when you need to act with general world knowledge and common sense. Prioritize it when you are confident in solving the problem yourself. Input can be any instruction. 
 
-For example, 
-Rule: The outside air temperature must be below 32 degrees Fahrenheit in order for it to be snowing. 
-Plan: Look up the outside air temperature.#E1=WeatherData[lookup outside air temperature] 
+For example,
+Task: Find the nationality of the goalie of the UEFA Champions League Champions in 2023. 
+Plan: Look up the winner team of the UEFA Champions League in 2023.#E1=TeamData[Winner UEFA Champions League 2023]
+Plan: Look up the goalie of the team in 2023.#E2=TeamMemberData[Name of the Goalie in team #E1]
+Plan: Look up the nationality of the goalie.#E3=SoccerPlayerData[Nationality of the player #E2]
 
 Begin! 
-Describe your plans with rich details. Each Plan should be followed by only one #E.
+Describe your plans with rich details. Each Plan should be followed by only one #E. Do not include any additional commentary or modify the format of the plan.
 
 Rule: {rule}"""
 

@@ -6,18 +6,18 @@ def tool(func):
     return func
 
 @tool
-def get_patient_notes(patient_id: str):
-    """Get patient chart notes by patient ID."""
+def get_patient_notes(patientId: str):
+    """Get patient chart notes by patient ID available in the task details."""
     return {
-        "id": patient_id,
+        "id": patientId,
         "notes": "Patient was diagnosed with Type 2 diabetes on 2023-01-09. Patient has an A1C level of 9.5%."
     }
     
 @tool
-def get_patient_data(patient_id: str):
-    """Get demographic patient data by patient ID."""
+def get_patient_data(patientId: str):
+    """Get demographic patient data by patient ID available in the task details."""
     return {
-        "id": patient_id,
+        "id": patientId,
         "name": "John Doe",
         "birthdate": "2010-01-05"
     }

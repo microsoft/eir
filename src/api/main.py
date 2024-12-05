@@ -36,9 +36,11 @@ from .agents.executor import run_plan
 from .tools.drug_rules import fetch_drug_rules
 
 import fastapi
+from fastapi.staticfiles import StaticFiles
 
 
 app = fastapi.FastAPI()
+app.mount("/static", StaticFiles(directory="src/static"), name="static")
 
 class plan_request(BaseModel):
     drug: str
