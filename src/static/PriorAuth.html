@@ -86,7 +86,7 @@
 			</div>
 			<div class="column">
 				<p>Evaluation Recommendation</p>
-				<textarea id="executionResult" rows="6" cols="100"></textarea>
+				<textarea id="executionResult" rows="10" cols="150"></textarea>
 			</div>
 		</div>
 		<hr/>
@@ -171,8 +171,7 @@
 					headers: {
 						'Content-Type': 'application/json'
 					},
-					body: JSON.stringify({ 
-						//task: "Is the patient with id " + patient + "eligible for the" + drug + "drug?",
+					body: JSON.stringify({ 						
 						task: `Is the patient with id ${patient} eligible for the ${drug} drug?`,
 						plan: plan
 				})
@@ -184,19 +183,17 @@
 					throw new Error('Network response was not ok');
 				}
 				
-				//const data = await response.json();				
-				const reader = response.body.getReader();
-				const decoder = new TextDecoder();
-				let result = '';
-				let done = false;
-	
-				while (!done) {
-					const { value, done: streamDone } = await reader.read();
-					done = streamDone;
-					result += decoder.decode(value, { stream: !done });
-				}
+				const data = await response.json();				
+				const results = data.results;
 
-				document.getElementById('executionResult').value = result;
+				let resultText = '';
+
+				const keys = Object.keys(results);
+				keys.forEach(key => {
+					resultText += `${key}: ${results[key]}\n`;
+				});
+
+				document.getElementById('executionResult').value = resultText;
 				
 			} catch(exception) {
 				alert(`There was a problem with the fetch operation: ${exception.message}`);
