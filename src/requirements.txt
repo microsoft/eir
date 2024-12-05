@@ -5,3 +5,8 @@ langgraph
 python-dotenv
 oauthlib
 requests-oauthlib
+azure-monitor-opentelemetry
+azure-monitor-opentelemetry-exporter
+openinference-instrumentation-langchain 
+opentelemetry-sdk 
+opentelemetry-exporter-otlp

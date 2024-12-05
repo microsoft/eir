@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Prior Auth Example</title>
+		<style type="text/css">
+			body {
+				background-color: lightblue;
+				padding: 20px;
+  				font-family: Arial, sans-serif;
+			}
+
+			.h1 {
+				text-align: center;
+			}
+
+			.h3 {
+				margin-bottom: -10px;
+			}
+
+			.section {
+				width: 100%;
+				display: table;
+				border: black 3px;
+				border-style: double;
+				margin-bottom: 20px;
+			}
+
+			.column {
+				background-color: white;
+				padding: 20px;
+				display: table-cell;
+				vertical-align: middle;
+				width: auto;
+				font-size: 16px;
+			}
+
+			select, input, label {
+				display: block;
+				margin: 2px;
+			}
+		</style>
+	</head>
+
+	<body>
+		<h1>Prior Auth Example</h1>
+		<hr/>
+		<h3>Draft Evaluation Plan</h3>
+		<div class="section">
+			<div class="column">
+				<form id="generate-plan-form">
+					<label for="drugs">Drug:</label>
+					<select name="drugs" id="plan-generate-drugs">
+						<option value="humira">Humira</option>					
+						<option selected value="ozempic">Ozempic</option>
+					</select>
+					<br/>
+					<input id="get-rules-drugs" type="button" value="Get Rules >>" style="height: 40px;">
+					<br/>
+					<label>Acceptance Criteria</label>
+					<textarea id="drugRules" rows="6" cols="100"></textarea>
+					<br/>
+					<input id="generatePlan" type="submit" value="Generate Plan >>" style="height: 40px;">
+				</form>
+			</div>
+			<div class="column">
+				<p>Plan</p>
+				<textarea id="generationResult" rows="6" cols="100"></textarea>
+			</div>
+		</div>
+		<hr/>
+		<h3>Execute Evaluation Plan</h3>
+		<div class="section">
+			<div class="column">
+				<form id="execute-plan-form">
+					<label for="patientId">Member Id:</label>
+					<input type="text" id="patientId" name="Patient Id" value="1234" >
+					<br/>
+					<label for="plan-execute-drugs">Drug:</label>
+					<select name="drugs" id="plan-execute-drugs">
+						<option value="humira">Humira</option>					
+						<option selected value="ozempic">Ozempic</option>
+					</select>
+					<br/>
+					<input id="executePlan" type="submit" value="Execute Plan >>" style="height: 40px;">
+				</form>
+			</div>
+			<div class="column">
+				<p>Evaluation Recommendation</p>
+				<textarea id="executionResult" rows="10" cols="150"></textarea>
+			</div>
+		</div>
+		<hr/>
+	</body>
+	<script>
+		let generationCount = 0;
+		let executionCount = 0;	
+		//Get rules for a drug
+		document.getElementById('get-rules-drugs').addEventListener('click', async function(event) {
+
+			let drug = document.getElementById('plan-generate-drugs').value;
+			const request = new Request("/get_rules?drug=" + encodeURIComponent(drug), {method: "GET"});
+
+				try {
+					const response = await fetch(request);		
+					if(!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+
+					//const data = await response;
+					const reader = response.body.getReader();
+					const decoder = new TextDecoder();
+					let result = '';
+					let done = false;
+		
+					while (!done) {
+						const { value, done: streamDone } = await reader.read();
+						done = streamDone;
+						result += decoder.decode(value, { stream: !done });
+					}
+
+					document.getElementById('drugRules').value = result;
+
+				} catch(exception) {
+					// todo
+					alert(`There was a problem with the fetch operation: ${exception.message}`);
+				}
+		});
+		//
+		//Generate Plan Form
+		//
+		document.getElementById('generate-plan-form').addEventListener('submit', async function(event) {
+            event.preventDefault(); // Prevent the default form submission            
+			
+			let drug = document.getElementById('plan-generate-drugs').value;			
+			let rules = document.getElementById('drugRules').value;
+
+			const request = new Request("/generate_plan", {
+				method: "POST",
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ 
+					drug: drug,
+					rules: rules})
+				});
+
+				try {
+					const response = await fetch(request);		
+					if(!response.ok) {
+						throw new Error('Network response was not ok');
+					}
+
+					const data = await response.json();
+					document.getElementById('generationResult').value = data;
+				} catch(exception) {					
+					alert(`There was a problem with the fetch operation: ${exception.message}`);
+				}
+			});
+			//
+			//Execute Plan Form
+			//
+		document.getElementById('execute-plan-form').addEventListener('submit', async function (event) 
+		{
+			event.preventDefault();
+			let patient = document.getElementById('patientId').value;							
+			let drug = document.getElementById('plan-execute-drugs').value;
+			let plan = document.getElementById('generationResult').value;
+	
+			const request = new Request("/execute_plan", {
+					method: "POST",
+					headers: {
+						'Content-Type': 'application/json'
+					},
+					body: JSON.stringify({ 						
+						task: `Is the patient with id ${patient} eligible for the ${drug} drug?`,
+						plan: plan
+				})
+			});
+
+			try {
+				const response = await fetch(request);
+				if(!response.ok) {
+					throw new Error('Network response was not ok');
+				}
+				
+				const data = await response.json();				
+				const results = data.results;
+
+				let resultText = '';
+
+				const keys = Object.keys(results);
+				keys.forEach(key => {
+					resultText += `${key}: ${results[key]}\n`;
+				});
+
+				document.getElementById('executionResult').value = resultText;
+				
+			} catch(exception) {
+				alert(`There was a problem with the fetch operation: ${exception.message}`);
+			}
+		});
+	</script>
+</html>

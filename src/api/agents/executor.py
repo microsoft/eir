@@ -76,13 +76,12 @@ def _route(state):
 
 task = "Is the patient with id 1234 eligible for the Ozempic drug?"
 solve_prompt = """Solve the following task or problem. To solve the problem, we have made step-by-step Plan and \
-retrieved corresponding Evidence to each Plan. Use them with caution since long evidence might \
-contain irrelevant information.
+retrieved corresponding Evidence to each Plan. Use them with caution since long evidence might contain irrelevant information.
 
 {plan}
 
-Now solve the question or task according to provided Evidence above. Respond with the answer
-directly with no extra words.
+Now solve the question or task according to provided Evidence above. \
+Respond with the answer directly with no extra words.
 
 Task: {task}
 Response:"""
