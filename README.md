@@ -1,75 +1,89 @@
-# Simple FastAPI container
+# Prior Authorization Copilot
 
-This repository includes a simple Python FastAPI app with a single route that returns JSON.
-You can use this project as a starting point for your own APIs.
+## Overview
 
-The repository is designed for use with [Docker containers](https://www.docker.com/), both for local development and deployment, and includes infrastructure files for deployment to [Azure Container Apps](https://learn.microsoft.com/azure/container-apps/overview). 🐳
+The process of approving prior authorization requests is often time consuming and error prone for Pharmacy Benefit Managers. This solution demonstrates the use of an LLM Copilot to assist a human reviewer in determining what patient data is required to approve a request and automatically fetching that data. The copilot will then reason over the fetched data to determine if individual conditions and requirements for approval can be met.
 
-The code is tested with [pytest](https://docs.pytest.org/en/7.2.x/),
-linted with [ruff](https://github.com/charliermarsh/ruff), and formatted with [black](https://black.readthedocs.io/en/stable/).
-Code quality issues are all checked with both [pre-commit](https://pre-commit.com/) and Github actions.
+To create this Copilot, we will use the ReWOO pattern. [ReWOO](https://github.com/billxbf/ReWOO) (Reasoning WithOut Observation) is a variation of the ReACT pattern which detaches the reasoning process from external observations, thus significantly reducing token consumption. Since we anticipate a very high volume of requests for the system, it is desirable to minimize the token consumption where possible. We also want to reduce the variability introduced in subsequent calls to the LLM for planning once an acceptable plan has been established for a specific type of request (i.e. drug, device, procedure, etc).
 
-## Opening the project
+### Process Flow
 
-This project has [Dev Container support](https://code.visualstudio.com/docs/devcontainers/containers), so it will be be setup automatically if you open it in Github Codespaces or in local VS Code with the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers).
+![LangGraph diagram](./docs/rewoo_flow.png)
 
-If you're not using one of those options for opening the project, then you'll need to:
+1. The first step in this process is to ask the LLM to create a plan for fetching and validating the required patient data. In this case, we will send a request to the LLM with a series of natural language questions, or "rules", that describe when a patient should be eligible to receive the Ozempic™ drug. Once the plan is created, and validated for accuracy by a human, it can be persisted for future requests for this drug.
+2. The resulting plan is a series of steps, including tool calls, that the orchestrator should execute to augment the initial request with enough data to answer our questions which were used to generate the plan.
+3. Once these steps are complete, the resulting data is sent to our "solver". The solver agent assembles the output and presents it to the human reviewer for a decision.
 
-1. Create a [Python virtual environment](https://docs.python.org/3/tutorial/venv.html#creating-virtual-environments) and activate it.
+## Technical Architecture
 
-2. Install the requirements:
+![Azure technical architecture](./docs/Orchestration_PriorAuth.png)
 
-    ```shell
-    python3 -m pip install -r requirements-dev.txt
-    ```
+## API Endpoints
 
-3. Install the pre-commit hooks:
+We have made available three endpoints that should cover the process of generating and executing an LLM execution plan:
 
-    ```shell
-    pre-commit install
-    ```
+The **/get_rules** endpoint retrieves the set of rules or questions related to the prior authorization approval process for a specific drug. The drug url query parameter is used to filter the specific set of rules needed. 
 
-## Local development
+|  |  |
+| -- | -- |
+| Request Type | GET |
+| Request URL | [BACKEND_APP_ENDPOINT]/get_rules?drug={drug_name} |
 
-1. Run the local server:
+The **/generate_plan** endpoint accepts a POST request that includes a rules element. The rules element of the body is utilized by Langchain to generate a tool execution plan. Using Langchain as an orchestrator, the LLM leverages its tool execution skills to create the plan. The response from this endpoint will be a single JSON object containing the generative answer in a "text" value.
 
-    ```shell
-    fastapi dev src/api/main.py
-    ```
+We included a separate plan generation endpoint for two main reasons:
+•	The resulting plan can be stored and reused (cached) which will help control cost as it limits unnecessary calls to the LLM (a plan only needs to be generated once per drug or when the rules change). Also, it improves repeatability as the plan is not changing between executions as it is possible with a non-deterministic model (LLM).
+•	We recommend including a human in the loop which will review the accuracy of a plan before it is executed. This only needs to happen when the plan is generated for a specific drug (or when the request approval rules change), not every time it is executed.
 
-2. Click 'http://127.0.0.1:8000' in the terminal, which should open a new tab in the browser.
+<table>
+<tr><td>Request Type</td><td>POST</td></tr>
+<tr><td>Request URL</td><td>[BACKEND_APP_ENDPOINT]/generate_plan</td></tr>
+<tr><td>Headers</td><td>content-type: application/json</td></tr>
+<tr><td valign="top">Body</td>
+<td>
 
-3. Try the API at '/generate_name' and try passing in a parameter at the end of the URL, like '/generate_name?starts_with=N'.
+```json
+{
+    "drug": "Ozempic",
+    "rules": "Patient must be 18 years or older AND Patient must have a confirmed diagnosis of Type 2 diabetes AND Patient must have an A1C level of 7.0% or higher AND Patient must have a fasting plasma glucose (FPG) greater than or equal to 126 mg/dL OR Patient must have a 2-hour plasma glucose (PG) greater than or equal to 200 mg/dL during OGTT (oral glucose tolerance test) OR Patient must have a random plasma glucose greater than or equal to 200 mg/dL in patient with classic symptoms of hyperglycemia or hyperglycemic crisis."
+}
+```
 
-### Local development with Docker
+</td></tr>
+</table>
 
-You can also run this app with Docker, thanks to the `Dockerfile`.
+The **/execute_plan** endpoint accepts a POST request that includes a task and a plan element. The task for this use case is the same every time:  "Is the patient with id {patient_id} eligible for the {drug_name} drug?". The task corresponds to the prompt used in the agents\executor.py file.
+The tool execution plan that is stored in a permanent repository by drug name and generated by the generate_plan endpoint. Storing the execution plan has a few purposes:
+•	Improves consistency and mitigates non-deterministic responses from the LLM and 
+•	Cuts down on unnecessary use of LLM tokens for repeated plan generation per drug.
+The response from this endpoint will be a single JSON object containing the generative answer in a "text" value.
 
-You need to either have Docker Desktop installed or have this open in Github Codespaces for these commands to work. ⚠️ If you're on an Apple M1/M2, you won't be able to run `docker` commands inside a Dev Container; either use Codespaces or do not open the Dev Container.
+<table>
+<tr><td>Request Type</td><td>POST</td></tr>
+<tr><td>Request URL</td><td>[BACKEND_APP_ENDPOINT]/execute_plan</td></tr>
+<tr><td>Headers</td><td>content-type: application/json</td></tr>
+<tr>
+<td valign=top>Body</td>
+<td>
 
-1. Build the image:
+```json
+{
+    "task": "Is the request for patient {patientId} eligible for {drug_name}?",
+    "plan" : " DRUG_BASED_RULES"
+}
+```
 
-    ```shell
-    docker build --tag fastapi-app ./src
-    ```
+</td>
+</tr>
+</table>
 
-2. Run the image:
 
-    ```shell
-    docker run --publish 3100:3100 fastapi-app
-    ```
-
-### Deployment
+## Deployment
 
 This repo is set up for deployment on Azure Container Apps using the configuration files in the `infra` folder.
 
-This diagram shows the architecture of the deployment:
-
-![Diagram of app architecture: Azure Container Apps environment, Azure Container App, Azure Container Registry, Container, and Key Vault](docs/readme_diagram.png)
-
 Steps for deployment:
 
-1. Sign up for a [free Azure account](https://azure.microsoft.com/free/) and create an Azure Subscription.
 2. Install the [Azure Developer CLI](https://learn.microsoft.com/azure/developer/azure-developer-cli/install-azd). (If you open this repository in Codespaces or with the VS Code Dev Containers extension, that part will be done for you.)
 3. Login to Azure:
 
@@ -92,7 +106,7 @@ Steps for deployment:
     azd deploy
     ```
 
-### Costs
+## Costs
 
 Pricing varies per region and usage, so it isn't possible to predict exact costs for your usage.
 The majority of the Azure resources used in this infrastructure are on usage-based pricing tiers.
@@ -107,7 +121,3 @@ You can try the [Azure pricing calculator](https://azure.com/e/9f8185b239d240b39
 ⚠️ To avoid unnecessary costs, remember to take down your app if it's no longer in use,
 either by deleting the resource group in the Portal or running `azd down`.
 
-
-## Getting help
-
-If you're working with this project and running into issues, please post in **Discussions**.
