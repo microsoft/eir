@@ -18,6 +18,31 @@ To create this Copilot, we will use the ReWOO pattern. [ReWOO](https://github.co
 
 ![Azure technical architecture](./docs/Orchestration_PriorAuth.png)
 
+## Components
+
+Application folder structure
+
+- src/api
+  - agents
+    - executor.py
+    - planner.py
+  - models
+    - state.py
+  - tools
+    - drug_rules.py
+    - patient_data.py
+  - static
+    - PriorAuth.html
+  - main.py
+
+| Component | Description |
+|--|--|
+| [planner.py](./src/api/agents/planner.py) | Contains the main prompt of the agent in charge of generating an execution plan. It takes a list of drug rules/questions as a parameter. <br>This prompt will have a plain English reference to each one of the tools that the plan will execute. These are data source specific tools (ChartNotes, ECDH, member claims, etc.) that will be used by the LLM depending on the question it is trying to answer. |
+| [executor.py](./src/api/agents/executor.py) | Deals with processing an execution plan if it adheres to the ReWOO plan format. |
+| [drug_rules.py](./src/api/tools/drug_rules.py) | Currently returns a hard coded list of rules/questions in plain English for Ozempic and Humira. This file should be replaced with a client that fetches data from a data repository. i.e. CosmosDB, SQL Server, etc. |
+| [patient_data.py](./src/api/tools/patient_data.py) | An example of the definition of a tool that can be registered with the executor. A function needs to be decorated with the @tool decorator. In this case both functions return a JSON structure to the LLM. |
+
+
 ## API Endpoints
 
 We have made available three endpoints that should cover the process of generating and executing an LLM execution plan:
